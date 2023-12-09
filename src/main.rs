@@ -1,3 +1,6 @@
+use std::env;
+use std::process;
+
 mod robot;
 mod utils;
 
@@ -69,6 +72,12 @@ fn particle_filter(
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 3 {
+        println!("Usage: cargo run --release -- 1000 100");
+        process::exit(1);
+    }
+
     let world_size = 100.0;
     let landmarks: Vec<Vec<f32>> = vec![
         vec![20.0, 20.0],
@@ -76,8 +85,8 @@ fn main() {
         vec![20.0, 80.0],
         vec![80.0, 20.0],
     ];
-    let n = 100;
-    let iterations = 100;
+    let n = args[1].parse::<usize>().unwrap();
+    let iterations = args[2].parse::<usize>().unwrap();
 
     let mut my_robot = robot::Robot::new(world_size);
     let mut my_robot_histo: Vec<Vec<f32>> = vec![vec![my_robot.x, my_robot.y]];
@@ -99,14 +108,16 @@ fn main() {
         my_robot_histo.push(vec![my_robot.x, my_robot.y]);
     }
 
-    for i in 0..particles_histo.len() {
-        println!("I{}", i);
-        for j in 0..particles_histo[i].len() {
-            println!(
-                "P{};{};{}",
-                j, particles_histo[i][j].x, particles_histo[i][j].y
-            );
+    if args.len() > 3 && args[3] == "p" {
+        for i in 0..particles_histo.len() {
+            println!("I{}", i);
+            for j in 0..particles_histo[i].len() {
+                println!(
+                    "P{};{};{}",
+                    j, particles_histo[i][j].x, particles_histo[i][j].y
+                );
+            }
+            println!("R;{};{}", my_robot_histo[i][0], my_robot_histo[i][1]);
         }
-        println!("R;{};{}", my_robot_histo[i][0], my_robot_histo[i][1]);
     }
 }
