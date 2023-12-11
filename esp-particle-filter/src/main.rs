@@ -87,26 +87,27 @@ fn main() {
         vec![80.0, 20.0],
     ];
     let n = 1000;
-    let iterations = 10;
+    let iterations = 100;
 
     let mut my_robot = robot::Robot::new(world_size);
-    let mut my_robot_histo: Vec<Vec<f32>> = vec![vec![my_robot.x, my_robot.y]];
-    let mut particles_histo: Vec<Vec<robot::Robot>> = Vec::new();
+    //let mut my_robot_histo: Vec<Vec<f32>> = vec![vec![my_robot.x, my_robot.y]];
+    //let mut particles_histo: Vec<Vec<robot::Robot>> = Vec::new();
+    let mut last_particles: Vec<robot::Robot> = Vec::new();
 
-    let mut first_particles: Vec<robot::Robot> = Vec::new();
+    //let mut first_particles: Vec<robot::Robot> = Vec::new();
     for _ in 0..n {
         let mut particle = robot::Robot::new(world_size);
         particle.set_noise(0.05, 0.05, 5.0);
-        first_particles.push(particle);
+        last_particles.push(particle);
     }
 
-    particles_histo.push(first_particles);
+    //particles_histo.push(first_particles);
 
     for _ in 0..iterations {
         let particles =
-            particle_filter(&particles_histo.last().unwrap(), &mut my_robot, &landmarks);
-        particles_histo.push(particles);
-        my_robot_histo.push(vec![my_robot.x, my_robot.y]);
+            particle_filter(&last_particles, &mut my_robot, &landmarks);
+        last_particles = particles;
+        //my_robot_histo.push(vec![my_robot.x, my_robot.y]);
     }
 
     let stop = unsafe {esp_idf_svc::sys::esp_timer_get_time()};
