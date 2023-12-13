@@ -7,6 +7,8 @@ $ target/debug/particle_filter_embed 1000 100 p > results.txt
 $ python3 plot_results.py
 ```
 
+. $HOME/export-esp.sh
+
 ## Measure execution time
 ``` bash
 $ cargo build --release

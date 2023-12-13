@@ -67,16 +67,7 @@ fn particle_filter(
 
     particles
 }
-
-fn main() {
-    // It is necessary to call this function once. Otherwise some patches to the runtime
-    // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
-    esp_idf_svc::sys::link_patches();
-
-    // Bind the log crate to the ESP Logging facilities
-    esp_idf_svc::log::EspLogger::initialize_default();
-
-    log::info!("Hello, world!");
+fn execute(n: i32) {
     let start = unsafe {esp_idf_svc::sys::esp_timer_get_time()};
 
     let world_size = 100.0;
@@ -86,7 +77,6 @@ fn main() {
         vec![20.0, 80.0],
         vec![80.0, 20.0],
     ];
-    let n = 1000;
     let iterations = 100;
 
     let mut my_robot = robot::Robot::new(world_size);
@@ -111,6 +101,24 @@ fn main() {
     }
 
     let stop = unsafe {esp_idf_svc::sys::esp_timer_get_time()};
-    log::info!("Time: {} us", stop - start);
+    log::info!("{};{};us", n, stop - start);
+}
+
+fn main() {
+    // It is necessary to call this function once. Otherwise some patches to the runtime
+    // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
+    esp_idf_svc::sys::link_patches();
+
+    // Bind the log crate to the ESP Logging facilities
+    esp_idf_svc::log::EspLogger::initialize_default();
+
+    log::info!("Hello, world!");
+    
+    // launch varius execute with different number of particles
+    for i in 0..10 {
+        execute(1000 * (i + 1));
+    }
+
+    log::info!("Bye, world!");
 
 }
