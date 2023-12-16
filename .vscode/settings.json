@@ -1,5 +1,4 @@
 {
     "rust-analyzer.linkedProjects": [
-        "./esp-particle-filter/Cargo.toml"
     ]
 }

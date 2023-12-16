@@ -5,6 +5,7 @@ mod robot;
 mod utils;
 
 fn move_particles(particles: &Vec<robot::Robot>, turn: f32, forward: f32) -> Vec<robot::Robot> {
+    //coz::scope!("move_particles");
     let mut result: Vec<robot::Robot> = Vec::new();
     for i in 0..particles.len() {
         result.push(particles[i].movee(turn, forward));
@@ -17,6 +18,7 @@ fn measurement_prob(
     landmarks: &Vec<Vec<f32>>,
     measurement: &Vec<f32>,
 ) -> Vec<f32> {
+    //coz::scope!("measurement_prob");
     let mut weights: Vec<f32> = Vec::new();
     for i in 0..particles.len() {
         weights.push(particles[i].measure_prob(landmarks, measurement));
@@ -32,6 +34,7 @@ fn measurement_prob(
 }
 
 fn resample(particles: &Vec<robot::Robot>, weights: &Vec<f32>) -> Vec<robot::Robot> {
+    //coz::scope!("resample");
     let mut result: Vec<robot::Robot> = Vec::new();
     let mut index = 0;
     let mut beta = 0.0;
@@ -52,6 +55,7 @@ fn particle_filter(
     my_robot: &mut robot::Robot,
     landmarks: &Vec<Vec<f32>>,
 ) -> Vec<robot::Robot> {
+    //coz::scope!("particle_filter");
     // move robot and sense environment
     let my_new_robot = my_robot.movee(0.1, 5.0);
     *my_robot = my_new_robot;
@@ -106,6 +110,7 @@ fn main() {
             particle_filter(&particles_histo.last().unwrap(), &mut my_robot, &landmarks);
         particles_histo.push(particles);
         my_robot_histo.push(vec![my_robot.x, my_robot.y]);
+        coz::progress!("iter filtro");
     }
 
     if args.len() > 3 && args[3] == "p" {
